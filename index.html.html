@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPUU Professors</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 15px;
+            color: #222;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: #f0f2f5;
+            padding-bottom: 10px;
+            z-index: 100;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        input:focus {
+            border-color: #2481cc;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .card:active {
+            transform: scale(0.98);
+        }
+        .dept {
+            font-size: 11px;
+            font-weight: bold;
+            color: #2481cc;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        .name {
+            font-size: 17px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .email {
+            color: #555;
+            text-decoration: none;
+            font-size: 14px;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+        }
+        .email::before {
+            content: "✉️";
+            margin-right: 8px;
+        }
+        .no-results {
+            text-align: center;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <input type="text" id="search" placeholder="Professor ismini qidirish...">
+    </div>
+
+    <div id="list"></div>
+
+    <script>
+        const profs = [
+            // Mathematics
+            {n: "Marks Ruziboev", e: "m.ruziboev@npuu.uz", d: "Mathematics"},
+            {n: "Azamat Xolboyev", e: "a.xolboyev@npuu.uz", d: "Mathematics"},
+            {n: "Allambergen Qudaybergenov", e: "a.qudaybergenov@npuu.uz", d: "Mathematics"},
+            {n: "Bakhtinur Juraev", e: "b.juraev@npuu.uz", d: "Mathematics"},
+            {n: "Farhod Muxamadiyev", e: "f.muxamadiyev@npuu.uz", d: "Mathematics"},
+            {n: "Anvar Sa'dullayev", e: "a.sa'dullayev@npuu.uz", d: "Mathematics"},
+            {n: "Shakhzod Suvanov", e: "sh.suvanov@npuu.uz", d: "Mathematics"},
+            {n: "Zarif Ibragimov", e: "z.ibragimov@npuu.uz", d: "Mathematics"},
+
+            // IT
+            {n: "Asadulla Ashurov", e: "a.ashurov@npuu.uz", d: "IT"},
+            {n: "Bakhromjon Tulkinov", e: "b.tulkinov@npuu.uz", d: "IT"},
+            {n: "Mirrakhmon Khaydarov", e: "m.khaydarov@npuu.uz", d: "IT"},
+            {n: "Ulugbek Tursunaliev", e: "u.tursunaliev@npuu.uz", d: "IT"},
+
+            // General English
+            {n: "Azamat Akhmedjanov", e: "a.akhmedjanov@npuu.uz", d: "General English"},
+            {n: "Azizabonu Ziyodullaeva", e: "a.ziyodullaeva@npuu.uz", d: "General English"},
+            {n: "Dilnoza Boymirzayeva", e: "d.boymirzayeva@npuu.uz", d: "General English"},
+            {n: "Mirjon Khidoyatov", e: "m.khidoyatov@npuu.uz", d: "General English"},
+            {n: "Mirsaid Abdurakhmonov", e: "m.abdurakhmonov@npuu.uz", d: "General English"},
+            {n: "Rano Khikmatova", e: "r.khikmatova@npuu.uz", d: "General English"},
+            {n: "Zukhra Khakimova", e: "z.khakimova@npuu.uz", d: "General English"},
+
+            // Education
+            {n: "Nilufar Tillayeva", e: "n.tillayeva@npuu.uz", d: "Education"},
+            {n: "Ozodakhon Shukurillaeva", e: "o.shukurillaeva@npuu.uz", d: "Education"},
+            {n: "Albina Suleymanova", e: "a.suleymanova@npuu.uz", d: "Education"}
+        ];
+
+        const listDiv = document.getElementById('list');
+        const searchInput = document.getElementById('search');
+
+        function render(data) {
+            if (data.length === 0) {
+                listDiv.innerHTML = '<div class="no-results">Hech kim topilmadi 😕</div>';
+                return;
+            }
+            listDiv.innerHTML = data.map(p => `
+                <div class="card" onclick="window.location.href='mailto:${p.e}'">
+                    <div class="dept">${p.d}</div>
+                    <span class="name">${p.n}</span>
+                    <a href="mailto:${p.e}" class="email">${p.e}</a>
+                </div>
+            `).join('');
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = profs.filter(p => 
+                p.n.toLowerCase().includes(term) || 
+                p.d.toLowerCase().includes(term)
+            );
+            render(filtered);
+        });
+
+        // Initial render
+        render(profs);
+
+        // Telegram WebApp sozlamalari
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Oynani to'liq ochish
+        tg.ready();
+    </script>
+</body>
+</html>
